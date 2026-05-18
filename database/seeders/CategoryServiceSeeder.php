@@ -7,20 +7,13 @@ use Illuminate\Support\Facades\DB;
 
 class CategoryServiceSeeder extends Seeder
 {
-    /**
-     * Run the database seeds.
-     */
     public function run(): void
     {
-        $now = now();
-
-        $categories = [
-            ['service_category_id' => 'CATS01', 'category_name' => 'Lấy cao răng', 'created_at' => $now, 'updated_at' => $now],
-            ['service_category_id' => 'CATS02', 'category_name' => 'Cắt tỉa', 'created_at' => $now, 'updated_at' => $now],
-            ['service_category_id' => 'CATS03', 'category_name' => 'Khách sạn', 'created_at' => $now, 'updated_at' => $now],
-            ['service_category_id' => 'CATS04', 'category_name' => 'Trị liệu', 'created_at' => $now, 'updated_at' => $now],
-        ];
-
-        DB::table('category_services')->insert($categories);
+        /* CHỈNH SỬA BƯỚC 5: category_services là bảng cha của services. */
+        DB::table('category_services')->insert([
+            ['service_category_id' => 1, 'category_name' => 'Lưu trú', 'note' => 'Dịch vụ gửi thú cưng qua ngày.', 'created_at' => now(), 'updated_at' => now()],
+            ['service_category_id' => 2, 'category_name' => 'Tắm grooming', 'note' => 'Tắm, sấy, vệ sinh cơ bản.', 'created_at' => now(), 'updated_at' => now()],
+            ['service_category_id' => 3, 'category_name' => 'Chăm sóc sức khỏe', 'note' => 'Theo dõi sức khỏe cơ bản.', 'created_at' => now(), 'updated_at' => now()],
+        ]);
     }
 }

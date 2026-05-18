@@ -6,31 +6,51 @@ class Pet extends BaseModel
 {
     protected $table = 'pet';
     protected $primaryKey = 'pet_id';
-    protected $fillable = ['pet_id', 'customer_id', 'pet_name', 'species', 'breed', 'sex', 'weight_kg', 'special_note'];
 
-    // Quan hệ N-1: Thú cưng thuộc về 1 Khách hàng (CHÍNH XÁC)
+    protected $fillable = [
+        'customer_id',
+        'pet_name',
+        'species',
+        'breed',
+        'sex',
+        'weight_kg',
+        'special_note',
+    ];
+
+    protected $casts = [
+        'weight_kg' => 'decimal:2',
+        'created_at' => 'datetime',
+        'updated_at' => 'datetime',
+    ];
+
     public function customer()
     {
         return $this->belongsTo(Customer::class, 'customer_id', 'customer_id');
     }
 
-    // [ĐÃ SỬA] Quan hệ N-N: Lấy danh sách các "Phòng đã đặt" (BookingRoom) mà bé Pet này từng ở
+    public function bookingRoomPets()
+    {
+        return $this->hasMany(BookingRoomPet::class, 'pet_id', 'pet_id');
+    }
+
     public function bookingRooms()
     {
-        // Phải dùng khóa booking_room_id vì bảng booking_room_pet cấu tạo từ pet_id và booking_room_id
         return $this->belongsToMany(BookingRoom::class, 'booking_room_pet', 'pet_id', 'booking_room_id')
             ->withPivot('assigned_at', 'note');
     }
 
-    // [ĐÃ CHUẨN HOÁ] Quan hệ N-N: Thú cưng sử dụng nhiều Dịch vụ
-    public function services()
+    public function bookingServicesPet()
     {
-        // Lấy đúng các cột phụ có trong bảng booking_services_pet
-        return $this->belongsToMany(Service::class, 'booking_services_pet', 'pet_id', 'service_id')
-            ->withPivot('booking_service_id', 'booking_id', 'employee_id', 'scheduled_at', 'status', 'note');
+        return $this->hasMany(BookingServicePet::class, 'pet_id', 'pet_id');
     }
 
-    // [BỔ SUNG THÊM] Rất cần thiết: Quan hệ 1-N với Sổ theo dõi sức khỏe
+    public function services()
+    {
+        return $this->belongsToMany(Service::class, 'booking_services_pet', 'pet_id', 'service_id')
+            ->withPivot('booking_service_id', 'booking_id', 'employee_id', 'scheduled_at', 'status', 'note')
+            ->withTimestamps();
+    }
+
     public function healthRecords()
     {
         return $this->hasMany(PetHealthRecord::class, 'pet_id', 'pet_id');

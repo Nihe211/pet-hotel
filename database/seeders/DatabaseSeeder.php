@@ -2,62 +2,96 @@
 
 namespace Database\Seeders;
 
-use App\Models\User;
-use Illuminate\Database\Console\Seeds\WithoutModelEvents;
 use Illuminate\Database\Seeder;
+use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Schema;
 
 class DatabaseSeeder extends Seeder
 {
-    use WithoutModelEvents;
-
     /**
-     * Seed the application's database.
+     * CHỈNH SỬA BƯỚC 5:
+     * - Seed dữ liệu theo thứ tự bảng cha trước, bảng con sau.
+     * - Tắt kiểm tra khóa ngoại trước khi reset dữ liệu để tránh lỗi FK khi truncate.
+     * - Bật lại kiểm tra khóa ngoại sau khi seed xong.
      */
     public function run(): void
     {
-        // User::factory(10)->create();
+        Schema::disableForeignKeyConstraints();
+
+        $this->truncateTables();
+
+        Schema::enableForeignKeyConstraints();
 
         $this->call([
-            // ==========================================
-            // NHÓM 1: CÁC BẢNG DANH MỤC & ĐỘC LẬP (Không chứa khóa ngoại)
-            // ==========================================
+            // Bảng cha / bảng danh mục / bảng nền tảng
+            BranchSeeder::class,
+            UserSeeder::class,
+            CustomerSeeder::class,
             CategoryProductSeeder::class,
             CategoryServiceSeeder::class,
             TypeRoomSeeder::class,
-            BranchSeeder::class,
-            CustomerSeeder::class,
 
-            // ==========================================
-            // NHÓM 2: PHỤ THUỘC CẤP 1 (Cần dữ liệu từ Nhóm 1)
-            // ==========================================
-            ProductSeeder::class,     // Cần category_product
-            ServiceSeeder::class,     // Cần category_services
-            EmployeeSeeder::class,    // Cần branch
-            RoomSeeder::class,        // Cần branch, type_room
-            PetSeeder::class,         // Cần customer
+            // Bảng phụ thuộc cấp 1
+            EmployeeSeeder::class,
+            PetSeeder::class,
+            ProductSeeder::class,
+            RoomSeeder::class,
+            ServiceSeeder::class,
 
-            // ==========================================
-            // NHÓM 3: PHỤ THUỘC CẤP 2 (Core logic hoạt động)
-            // ==========================================
-            BranchInventorySeeder::class,          // Cần branch, product
-            ServiceProductStandardSeeder::class,   // Cần services, product
-            UserSeeder::class,                     // Cần employee, customer (bảng users đã độ lại)
-            BookingSeeder::class,                  // Cần customer, branch
+            // Bảng nghiệp vụ chính
+            BookingSeeder::class,
+            BranchInventorySeeder::class,
+            OrderSeeder::class,
+            ServiceProductStandardSeeder::class,
 
-            // ==========================================
-            // NHÓM 4: GIAO DỊCH DỊCH VỤ & PHÒNG CHỜ
-            // ==========================================
-            BookingRoomSeeder::class,              // Cần booking, room
-            BookingServicePetSeeder::class,        // Cần booking, services, employee, pet
-            PetHealthRecordSeeder::class,          // Cần pet, booking
-            OrderSeeder::class,                    // Cần customer, branch, employee, booking
+            // Bảng nghiệp vụ con
+            BookingServicePetSeeder::class,
+            PetHealthRecordSeeder::class,
+            BookingRoomSeeder::class,
 
-            // ==========================================
-            // NHÓM 5: CHI TIẾT CUỐI CÙNG & THANH TOÁN
-            // ==========================================
-            BookingRoomPetSeeder::class,           // Cần booking_room, pet
-            OrderDetailSeeder::class,              // Cần orders, booking_room, booking_service_pet
-            PaymentSeeder::class,                  // Cần orders
+            // Bảng chi tiết, thanh toán, bảng trung gian
+            OrderDetailSeeder::class,
+            PaymentSeeder::class,
+            BookingRoomPetSeeder::class,
         ]);
+    }
+
+    private function truncateTables(): void
+    {
+        /*
+        |--------------------------------------------------------------------------
+        | CHỈNH SỬA BƯỚC 5: XÓA DỮ LIỆU THEO THỨ TỰ BẢNG CON -> BẢNG CHA
+        |--------------------------------------------------------------------------
+        | Mục đích:
+        | - Tránh lỗi ràng buộc khi database có bật khóa ngoại ở môi trường khác.
+        | - Đảm bảo php artisan migrate:fresh --seed có thể chạy lại nhiều lần.
+        */
+        $tables = [
+            'booking_room_pet',
+            'payments',
+            'order_details',
+            'booking_room',
+            'pet_health_record',
+            'booking_services_pet',
+            'service_product_standard',
+            'orders',
+            'branch_inventory',
+            'booking',
+            'services',
+            'room',
+            'product',
+            'pet',
+            'employee',
+            'type_room',
+            'category_services',
+            'category_product',
+            'customer',
+            'branch',
+            'app_user',
+        ];
+
+        foreach ($tables as $table) {
+            DB::table($table)->truncate();
+        }
     }
 }

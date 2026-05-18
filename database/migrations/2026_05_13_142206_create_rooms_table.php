@@ -6,29 +6,20 @@ use Illuminate\Support\Facades\Schema;
 
 return new class extends Migration
 {
-    /**
-     * Run the migrations.
-     */
     public function up(): void
     {
         Schema::create('room', function (Blueprint $table) {
-            $table->string('room_id', 10)->primary();
-            $table->string('branch_id', 10);
-            $table->string('type_room_id', 10);
-            $table->string('room_number', 10);
-            $table->enum('status', ['AVAILABLE', 'IN_USE', 'MAINTENANCE'])->default('AVAILABLE');
-            $table->timestamp('created_at')->useCurrent(); // Bảng này SQL của bạn không có updated_at
-
-            $table->foreign('branch_id', 'fk_room_branch')->references('branch_id')->on('branch');
-            $table->foreign('type_room_id', 'fk_room_type')->references('type_room_id')->on('type_room');
+            $table->id('room_id');
+            $table->unsignedBigInteger('branch_id'); // CHỈNH SỬA BƯỚC 3: chỉ khai báo kiểu dữ liệu, không khai báo khóa ngoại.
+            $table->unsignedBigInteger('type_room_id'); // CHỈNH SỬA BƯỚC 3: chỉ khai báo kiểu dữ liệu, không khai báo khóa ngoại.
+            $table->string('room_number', 20);
+            $table->string('status', 30); // CHỈNH SỬA BƯỚC 3: enum -> string, giá trị enum xử lý ở file riêng.
+            $table->timestampsTz(); // CHỈNH SỬA BƯỚC 3: thêm updated_at ngoài created_at.
         });
     }
 
-    /**
-     * Reverse the migrations.
-     */
     public function down(): void
     {
-        Schema::dropIfExists('rooms');
+        Schema::dropIfExists('room');
     }
 };

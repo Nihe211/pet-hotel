@@ -7,43 +7,33 @@ use Illuminate\Support\Facades\DB;
 
 class BranchSeeder extends Seeder
 {
-    /**
-     * Run the database seeds.
-     */
-
     public function run(): void
     {
-
-        $branches = [
+        /*
+        | CHỈNH SỬA BƯỚC 5:
+        | - branch là bảng cha, seed trước employee, room, booking, orders, inventory.
+        */
+        DB::table('branch')->insert([
             [
-                'branch_id' => 'BR003',
-                'branch_name' => 'Pet Spa Quận 7',
-                'phone' => '0283344556',
-                'email' => 'q7@petspa.vn',
-                'address' => 'Nguyễn Văn Linh, Q7',
-                'is_active' => 1
-
+                'branch_id' => 1,
+                'branch_name' => 'Pet Hotel Quận 1',
+                'phone' => '02811112222',
+                'email' => 'q1@pethotel.test',
+                'address' => '12 Nguyễn Trãi, Quận 1, TP.HCM',
+                'is_active' => true,
+                'created_at' => now(),
+                'updated_at' => now(),
             ],
             [
-                'branch_id' => 'BR004',
-                'branch_name' => 'Pet Spa Gò Vấp',
-                'phone' => '0283344557',
-                'email' => 'govap@petspa.vn',
-                'address' => 'Quang Trung, Gò Vấp',
-                'is_active' => 1
-
+                'branch_id' => 2,
+                'branch_name' => 'Pet Hotel Thủ Đức',
+                'phone' => '02833334444',
+                'email' => 'thuduc@pethotel.test',
+                'address' => '25 Võ Văn Ngân, Thủ Đức, TP.HCM',
+                'is_active' => true,
+                'created_at' => now(),
+                'updated_at' => now(),
             ],
-            [
-                'branch_id' => 'BR005',
-                'branch_name' => 'Pet Spa Bình Dương',
-                'phone' => '0274334455',
-                'email' => 'bd@petspa.vn',
-                'address' => 'Đại lộ Bình Dương',
-                'is_active' => 1
-
-            ],
-        ];
-
-        DB::table('branch')->insert($branches);
+        ]);
     }
 }

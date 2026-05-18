@@ -10,45 +10,49 @@ class User extends Authenticatable
 {
     use HasFactory, Notifiable;
 
-    // 1. Chỉ định tên khóa chính (Vì mặc định Laravel tìm cột 'id')
+    // CHỈNH SỬA BƯỚC 4: bảng tài khoản trong migration là app_user, không phải users.
+    protected $table = 'app_user';
+
     protected $primaryKey = 'user_id';
 
-    // 2. Tắt tính năng tự động tăng (Vì chúng ta dùng mã chuỗi như USR001)
-    public $incrementing = false;
+    // CHỈNH SỬA BƯỚC 4: user_id dùng $table->id() nên là số tự tăng.
+    public $incrementing = true;
 
-    // 3. Khai báo kiểu dữ liệu của khóa chính là chuỗi
-    protected $keyType = 'string';
+    protected $keyType = 'int';
 
-    /**
-     * Các thuộc tính được phép insert/update (Mass Assignable)
-     */
     protected $fillable = [
-        'user_id',
-        'employee_id',
-        'customer_id',
-        'username',
-        'password',
+        'password_hash',
         'role_emp',
+        'user_name',
         'is_active',
         'last_login',
     ];
 
-    /**
-     * Các thuộc tính bị ẩn đi (không hiển thị khi trả về JSON/API)
-     */
     protected $hidden = [
-        'password',
+        'password_hash',
         'remember_token',
     ];
 
-    /**
-     * Ép kiểu dữ liệu tự động
-     */
-    protected function casts(): array
+    protected $casts = [
+        'is_active' => 'boolean',
+        'last_login' => 'datetime',
+        'created_at' => 'datetime',
+        'updated_at' => 'datetime',
+    ];
+
+    // CHỈNH SỬA BƯỚC 4: Laravel Auth mặc định tìm password, trong DB đang dùng password_hash.
+    public function getAuthPassword()
     {
-        return [
-            'password' => 'hashed', // Tự động mã hóa mật khẩu khi lưu
-            'last_login' => 'datetime',
-        ];
+        return $this->password_hash;
+    }
+
+    public function customer()
+    {
+        return $this->hasOne(Customer::class, 'user_id', 'user_id');
+    }
+
+    public function employee()
+    {
+        return $this->hasOne(Employee::class, 'user_id', 'user_id');
     }
 }

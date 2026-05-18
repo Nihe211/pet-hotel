@@ -6,37 +6,23 @@ use Illuminate\Support\Facades\Schema;
 
 return new class extends Migration
 {
-    /**
-     * Run the migrations.
-     */
     public function up(): void
     {
         Schema::create('booking_services_pet', function (Blueprint $table) {
-            $table->string('booking_service_id', 10)->primary();
-            $table->string('booking_id', 10);
-            $table->string('service_id', 10)->nullable();
-            $table->string('employee_id', 10)->nullable();
-            $table->string('pet_id', 10);
-            $table->dateTime('scheduled_at')->nullable();
-
-            // Trạng thái của dịch vụ (VD: PENDING, IN_PROGRESS, COMPLETED)
-            $table->string('status', 20);
-
+            $table->id('booking_service_id');
+            $table->unsignedBigInteger('booking_id'); // CHỈNH SỬA BƯỚC 3: chỉ khai báo kiểu dữ liệu, không khai báo khóa ngoại.
+            $table->unsignedBigInteger('service_id')->nullable(); // CHỈNH SỬA BƯỚC 3: chỉ khai báo kiểu dữ liệu, không khai báo khóa ngoại.
+            $table->unsignedBigInteger('employee_id')->nullable(); // CHỈNH SỬA BƯỚC 3: chỉ khai báo kiểu dữ liệu, không khai báo khóa ngoại.
+            $table->unsignedBigInteger('pet_id'); // CHỈNH SỬA BƯỚC 3: chỉ khai báo kiểu dữ liệu, không khai báo khóa ngoại.
+            $table->dateTimeTz('scheduled_at')->nullable();
+            $table->string('status', 30); // CHỈNH SỬA BƯỚC 3: enum -> string, giá trị enum xử lý ở file riêng.
             $table->text('note')->nullable();
-            $table->timestamps();
-
-            $table->foreign('booking_id', 'fk_bks_booking')->references('booking_id')->on('booking');
-            $table->foreign('service_id', 'fk_bks_service')->references('service_id')->on('services');
-            $table->foreign('employee_id', 'fk_bks_employee')->references('employee_id')->on('employee');
-            $table->foreign('pet_id', 'fk_bks_pet')->references('pet_id')->on('pet');
+            $table->timestampsTz();
         });
     }
 
-    /**
-     * Reverse the migrations.
-     */
     public function down(): void
     {
-        Schema::dropIfExists('booking_service_pets');
+        Schema::dropIfExists('booking_services_pet');
     }
 };

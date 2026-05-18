@@ -4,17 +4,25 @@ namespace App\Models;
 
 class Service extends BaseModel
 {
-    protected $table = 'services'; // Tên bảng có 's'
+    protected $table = 'services';
     protected $primaryKey = 'service_id';
+
     protected $fillable = [
-        'service_id',
         'service_category_id',
         'service_name',
         'species',
         'description_sv',
         'base_price',
         'duration_minutes',
-        'is_active'
+        'is_active',
+    ];
+
+    protected $casts = [
+        'base_price' => 'decimal:2',
+        'duration_minutes' => 'integer',
+        'is_active' => 'boolean',
+        'created_at' => 'datetime',
+        'updated_at' => 'datetime',
     ];
 
     public function category()
@@ -27,17 +35,15 @@ class Service extends BaseModel
         return $this->hasMany(BookingServicePet::class, 'service_id', 'service_id');
     }
 
-    // [BỔ SUNG] Quan hệ 1-N: Lấy các dòng cấu hình định mức của dịch vụ này
-    public function serviceStandards()
+    public function serviceProductStandards()
     {
         return $this->hasMany(ServiceProductStandard::class, 'service_id', 'service_id');
     }
 
-    // [BỔ SUNG] Quan hệ N-N: Lấy trực tiếp danh sách Sản phẩm (vật tư tiêu hao) kèm số lượng định mức
     public function products()
     {
         return $this->belongsToMany(Product::class, 'service_product_standard', 'service_id', 'product_id')
-            // Cập nhật đúng tên cột từ bảng service_product_standard
-            ->withPivot('usage_amount', 'usage_unit', 'species', 'min_weight_kg', 'max_weight_kg');
+            ->withPivot('standard_id', 'species', 'min_weight_kg', 'max_weight_kg', 'usage_amount', 'usage_unit', 'note')
+            ->withTimestamps();
     }
 }

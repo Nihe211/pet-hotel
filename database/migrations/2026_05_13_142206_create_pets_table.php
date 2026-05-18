@@ -6,31 +6,23 @@ use Illuminate\Support\Facades\Schema;
 
 return new class extends Migration
 {
-    /**
-     * Run the migrations.
-     */
     public function up(): void
     {
         Schema::create('pet', function (Blueprint $table) {
-            $table->string('pet_id', 10)->primary();
-            $table->string('customer_id', 10);
-            $table->string('pet_name', 20);
+            $table->id('pet_id');
+            $table->unsignedBigInteger('customer_id'); // CHỈNH SỬA BƯỚC 3: chỉ khai báo kiểu dữ liệu, không khai báo khóa ngoại.
+            $table->string('pet_name', 60);
             $table->string('species', 30);
             $table->string('breed', 60)->nullable();
             $table->string('sex', 10)->nullable();
             $table->decimal('weight_kg', 5, 2)->nullable();
             $table->text('special_note')->nullable();
-            $table->timestamps();
-
-            $table->foreign('customer_id', 'fk_pet_customer')->references('customer_id')->on('customer');
+            $table->timestampsTz();
         });
     }
 
-    /**
-     * Reverse the migrations.
-     */
     public function down(): void
     {
-        Schema::dropIfExists('pets');
+        Schema::dropIfExists('pet');
     }
 };

@@ -6,30 +6,20 @@ use Illuminate\Support\Facades\Schema;
 
 return new class extends Migration
 {
-    /**
-     * Run the migrations.
-     */
     public function up(): void
     {
         Schema::create('pet_health_record', function (Blueprint $table) {
-            $table->string('health_record_id', 10)->primary();
-            $table->string('pet_id', 10);
-            $table->string('booking_id', 10);
-            $table->timestamp('recorded_at')->useCurrent(); // Theo SQL gốc
+            $table->id('health_record_id');
+            $table->unsignedBigInteger('pet_id'); // CHỈNH SỬA BƯỚC 3: chỉ khai báo kiểu dữ liệu, không khai báo khóa ngoại.
+            $table->unsignedBigInteger('booking_id'); // CHỈNH SỬA BƯỚC 3: chỉ khai báo kiểu dữ liệu, không khai báo khóa ngoại.
+            $table->dateTimeTz('recorded_at')->useCurrent();
             $table->text('note')->nullable();
-            $table->tinyInteger('status')->default(1);
-
-            // Chú ý: Ở đây bạn đặt tên constraint hơi khác (hpr_fk_...), mình giữ nguyên cho giống thiết kế của bạn
-            $table->foreign('pet_id', 'fk_hpr_pet_01')->references('pet_id')->on('pet');
-            $table->foreign('booking_id', 'fk_hpr_booking_01')->references('booking_id')->on('booking');
+            $table->boolean('status')->default(true); // CHỈNH SỬA BƯỚC 3: tinyInteger -> boolean vì đây là cờ trạng thái bản ghi.
         });
     }
 
-    /**
-     * Reverse the migrations.
-     */
     public function down(): void
     {
-        Schema::dropIfExists('pet_health_records');
+        Schema::dropIfExists('pet_health_record');
     }
 };

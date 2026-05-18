@@ -6,7 +6,16 @@ class CategoryService extends BaseModel
 {
     protected $table = 'category_services';
     protected $primaryKey = 'service_category_id';
-    protected $fillable = ['service_category_id', 'category_name', 'note'];
+
+    protected $fillable = [
+        'category_name',
+        'note',
+    ];
+
+    protected $casts = [
+        'created_at' => 'datetime',
+        'updated_at' => 'datetime',
+    ];
 
     public function services()
     {

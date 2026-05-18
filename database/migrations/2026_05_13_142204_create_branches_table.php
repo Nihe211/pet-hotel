@@ -6,27 +6,21 @@ use Illuminate\Support\Facades\Schema;
 
 return new class extends Migration
 {
-    /**
-     * Run the migrations.
-     */
     public function up(): void
     {
         Schema::create('branch', function (Blueprint $table) {
-            $table->string('branch_id', 10)->primary();
+            $table->id('branch_id');
             $table->string('branch_name', 120);
             $table->string('phone', 20)->nullable();
             $table->string('email', 254)->nullable()->unique('uq_branch_email');
-            $table->string('address', 120);
-            $table->tinyInteger('is_active')->default(1);
-            // Lưu ý: Ràng buộc CHECK (is_active IN (0,1)) sẽ được xử lý ở FormRequest khi validate
+            $table->string('address', 255);
+            $table->boolean('is_active')->default(true); // CHỈNH SỬA BƯỚC 3: tinyInteger -> boolean vì đây là cờ hoạt động.
+            $table->timestampsTz(); // CHỈNH SỬA BƯỚC 3: bổ sung created_at và updated_at chuẩn Laravel.
         });
     }
 
-    /**
-     * Reverse the migrations.
-     */
     public function down(): void
     {
-        Schema::dropIfExists('branches');
+        Schema::dropIfExists('branch');
     }
 };

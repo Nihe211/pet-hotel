@@ -6,31 +6,21 @@ use Illuminate\Support\Facades\Schema;
 
 return new class extends Migration
 {
-    /**
-     * Run the migrations.
-     */
     public function up(): void
     {
         Schema::create('services', function (Blueprint $table) {
-            $table->string('service_id', 10)->primary();
-            $table->string('service_category_id', 10);
+            $table->id('service_id');
+            $table->unsignedBigInteger('service_category_id'); // CHỈNH SỬA BƯỚC 3: chỉ khai báo kiểu dữ liệu, không khai báo khóa ngoại.
             $table->string('service_name', 120);
-            $table->string('species', 20);
+            $table->string('species', 30);
             $table->text('description_sv')->nullable();
             $table->decimal('base_price', 12, 2)->default(0);
-            $table->integer('duration_minutes')->nullable();
-            $table->tinyInteger('is_active')->default(1);
-            $table->timestamps();
-
-            $table->foreign('service_category_id', 'fk_services_category')
-                ->references('service_category_id')
-                ->on('category_services');
+            $table->unsignedSmallInteger('duration_minutes')->nullable();
+            $table->boolean('is_active')->default(true); // CHỈNH SỬA BƯỚC 3: tinyInteger -> boolean.
+            $table->timestampsTz();
         });
     }
 
-    /**
-     * Reverse the migrations.
-     */
     public function down(): void
     {
         Schema::dropIfExists('services');

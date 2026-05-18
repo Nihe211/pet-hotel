@@ -6,36 +6,26 @@ use Illuminate\Support\Facades\Schema;
 
 return new class extends Migration
 {
-    /**
-     * Run the migrations.
-     */
     public function up(): void
     {
         Schema::create('service_product_standard', function (Blueprint $table) {
-            $table->string('standard_id', 10)->primary();
-            $table->string('service_id', 10);
-            $table->string('product_id', 10);
-
-            // Đã chuyển thành enum theo Check constraint
-            $table->enum('species', ['DOG', 'CAT']);
+            $table->id('standard_id');
+            $table->unsignedBigInteger('service_id'); // CHỈNH SỬA BƯỚC 3: chỉ khai báo kiểu dữ liệu, không khai báo khóa ngoại.
+            $table->unsignedBigInteger('product_id'); // CHỈNH SỬA BƯỚC 3: chỉ khai báo kiểu dữ liệu, không khai báo khóa ngoại.
+            $table->string('species', 30); // CHỈNH SỬA BƯỚC 3: enum -> string, giá trị enum xử lý ở file riêng.
             $table->decimal('min_weight_kg', 5, 2);
             $table->decimal('max_weight_kg', 5, 2);
             $table->decimal('usage_amount', 10, 2);
-            $table->enum('usage_unit', ['ML', 'L', 'G', 'KG']);
-
+            $table->string('usage_unit', 20); // CHỈNH SỬA BƯỚC 3: enum -> string, giá trị enum xử lý ở file riêng.
             $table->text('note')->nullable();
-            $table->timestamps();
+            $table->timestampsTz();
 
-            $table->foreign('service_id', 'fk_sps_service')->references('service_id')->on('services');
-            $table->foreign('product_id', 'fk_sps_product')->references('product_id')->on('product');
+            $table->unique(['service_id', 'product_id', 'species', 'min_weight_kg'], 'uq_sps_logic');
         });
     }
 
-    /**
-     * Reverse the migrations.
-     */
     public function down(): void
     {
-        Schema::dropIfExists('service_product_standards');
+        Schema::dropIfExists('service_product_standard');
     }
 };

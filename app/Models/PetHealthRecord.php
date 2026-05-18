@@ -7,10 +7,21 @@ class PetHealthRecord extends BaseModel
     protected $table = 'pet_health_record';
     protected $primaryKey = 'health_record_id';
 
-    // Tắt timestamps mặc định vì SQL dùng recorded_at
+    // CHỈNH SỬA BƯỚC 4: bảng này chỉ có recorded_at, không có created_at/updated_at.
     public $timestamps = false;
 
-    protected $fillable = ['health_record_id', 'pet_id', 'booking_id', 'recorded_at', 'note', 'status'];
+    protected $fillable = [
+        'pet_id',
+        'booking_id',
+        'recorded_at',
+        'note',
+        'status',
+    ];
+
+    protected $casts = [
+        'recorded_at' => 'datetime',
+        'status' => 'boolean',
+    ];
 
     public function pet()
     {

@@ -6,28 +6,22 @@ use Illuminate\Support\Facades\Schema;
 
 return new class extends Migration
 {
-    /**
-     * Run the migrations.
-     */
     public function up(): void
     {
         Schema::create('customer', function (Blueprint $table) {
-            $table->string('customer_id', 10)->primary();
-            $table->string('user_id', 10)->nullable();
+            $table->id('customer_id');
+            $table->unsignedBigInteger('user_id')->nullable(); // CHỈNH SỬA BƯỚC 3: chỉ khai báo kiểu dữ liệu, không khai báo khóa ngoại.
             $table->string('full_name', 120);
             $table->string('email', 254)->nullable()->unique('uq_customer_email');
             $table->string('phone', 20)->unique('uq_customer_phone');
-            $table->string('address', 120)->nullable();
+            $table->string('address', 255)->nullable();
             $table->text('note')->nullable();
-            $table->timestamps();
+            $table->timestampsTz();
         });
     }
 
-    /**
-     * Reverse the migrations.
-     */
     public function down(): void
     {
-        Schema::dropIfExists('customers');
+        Schema::dropIfExists('customer');
     }
 };

@@ -7,21 +7,13 @@ use Illuminate\Support\Facades\DB;
 
 class CategoryProductSeeder extends Seeder
 {
-    /**
-     * Run the database seeds.
-     */
     public function run(): void
     {
-        $now = now();
-
-        $categories = [
-            ['product_category_id' => 'CATP01', 'category_name' => 'Thức ăn', 'created_at' => $now, 'updated_at' => $now],
-            ['product_category_id' => 'CATP02', 'category_name' => 'Phụ kiện', 'created_at' => $now, 'updated_at' => $now],
-            ['product_category_id' => 'CATP03', 'category_name' => 'Sữa tắm', 'created_at' => $now, 'updated_at' => $now],
-            ['product_category_id' => 'CATP04', 'category_name' => 'Đồ chơi', 'created_at' => $now, 'updated_at' => $now],
-            ['product_category_id' => 'CATP05', 'category_name' => 'Thú y', 'created_at' => $now, 'updated_at' => $now],
-        ];
-
-        DB::table('category_product')->insert($categories);
+        /* CHỈNH SỬA BƯỚC 5: category_product là bảng cha của product. */
+        DB::table('category_product')->insert([
+            ['product_category_id' => 1, 'category_name' => 'Thức ăn', 'created_at' => now(), 'updated_at' => now()],
+            ['product_category_id' => 2, 'category_name' => 'Sữa tắm', 'created_at' => now(), 'updated_at' => now()],
+            ['product_category_id' => 3, 'category_name' => 'Thuốc và vật tư', 'created_at' => now(), 'updated_at' => now()],
+        ]);
     }
 }

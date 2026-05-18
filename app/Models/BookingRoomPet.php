@@ -5,11 +5,22 @@ namespace App\Models;
 class BookingRoomPet extends BaseModel
 {
     protected $table = 'booking_room_pet';
+
+    // CHỈNH SỬA BƯỚC 4: bảng trung gian dùng khóa chính kép booking_room_id + pet_id.
     protected $primaryKey = null;
     public $incrementing = false;
     public $timestamps = false;
 
-    protected $fillable = ['booking_room_id', 'pet_id', 'assigned_at', 'note'];
+    protected $fillable = [
+        'booking_room_id',
+        'pet_id',
+        'assigned_at',
+        'note',
+    ];
+
+    protected $casts = [
+        'assigned_at' => 'datetime',
+    ];
 
     public function bookingRoom()
     {

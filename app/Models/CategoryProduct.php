@@ -6,7 +6,15 @@ class CategoryProduct extends BaseModel
 {
     protected $table = 'category_product';
     protected $primaryKey = 'product_category_id';
-    protected $fillable = ['product_category_id', 'category_name'];
+
+    protected $fillable = [
+        'category_name',
+    ];
+
+    protected $casts = [
+        'created_at' => 'datetime',
+        'updated_at' => 'datetime',
+    ];
 
     public function products()
     {

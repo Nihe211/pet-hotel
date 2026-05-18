@@ -6,31 +6,20 @@ use Illuminate\Support\Facades\Schema;
 
 return new class extends Migration
 {
-    /**
-     * Run the migrations.
-     */
     public function up(): void
     {
         Schema::create('branch_inventory', function (Blueprint $table) {
-            $table->string('branch_id', 10);
-            $table->string('product_id', 10);
-            $table->integer('quantity_in_stock')->default(0);
-            $table->integer('reorder_point')->nullable();
+            $table->id('inventory_id');
+            $table->unsignedBigInteger('branch_id'); // CHỈNH SỬA BƯỚC 3: chỉ khai báo kiểu dữ liệu, không khai báo khóa ngoại.
+            $table->unsignedBigInteger('product_id'); // CHỈNH SỬA BƯỚC 3: chỉ khai báo kiểu dữ liệu, không khai báo khóa ngoại.
+            $table->decimal('quantity_on_hand', 12, 2)->default(0);
+            $table->decimal('min_quantity', 12, 2)->default(0);
+            $table->timestampsTz(); // CHỈNH SỬA BƯỚC 3: dùng đủ created_at và updated_at.
 
-            // Cập nhật timestamp tự động khi có thay đổi (tương đương ON UPDATE CURRENT_TIMESTAMP)
-            $table->timestamp('last_updated')->useCurrent()->useCurrentOnUpdate();
-
-            // Khóa chính kép
-            $table->primary(['branch_id', 'product_id'], 'pk_branch_inventory');
-
-            $table->foreign('branch_id', 'fk_inventory_branch')->references('branch_id')->on('branch');
-            $table->foreign('product_id', 'fk_inventory_product')->references('product_id')->on('product');
+            $table->unique(['branch_id', 'product_id'], 'uq_inventory_branch_product');
         });
     }
 
-    /**
-     * Reverse the migrations.
-     */
     public function down(): void
     {
         Schema::dropIfExists('branch_inventory');

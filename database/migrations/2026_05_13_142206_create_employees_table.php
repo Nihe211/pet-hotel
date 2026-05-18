@@ -6,36 +6,25 @@ use Illuminate\Support\Facades\Schema;
 
 return new class extends Migration
 {
-    /**
-     * Run the migrations.
-     */
     public function up(): void
     {
         Schema::create('employee', function (Blueprint $table) {
-            $table->string('employee_id', 10)->primary();
-            $table->string('user_id', 10)->nullable();
-            $table->string('branch_id', 10);
+            $table->id('employee_id');
+            $table->unsignedBigInteger('user_id')->nullable(); // CHỈNH SỬA BƯỚC 3: chỉ khai báo kiểu dữ liệu, không khai báo khóa ngoại.
+            $table->unsignedBigInteger('branch_id'); // CHỈNH SỬA BƯỚC 3: chỉ khai báo kiểu dữ liệu, không khai báo khóa ngoại.
             $table->string('full_name', 120);
             $table->decimal('salary', 12, 2)->nullable();
             $table->string('email', 254)->nullable()->unique('uq_employee_email');
             $table->string('phone', 20)->unique('uq_employee_phone');
-            $table->dateTime('hire_date')->nullable();
-
-            // Ràng buộc trạng thái làm việc
-            $table->enum('status_code', ['WORKING', 'ON_LEAVE', 'RESIGNED'])->default('WORKING');
-
+            $table->date('hire_date')->nullable(); // CHỈNH SỬA BƯỚC 3: timestampTz -> date vì ngày tuyển dụng không cần giờ.
+            $table->string('status_code', 30); // CHỈNH SỬA BƯỚC 3: enum -> string, giá trị enum xử lý ở file riêng.
             $table->text('note')->nullable();
-            $table->timestamps();
-
-            $table->foreign('branch_id', 'fk_employee_branch')->references('branch_id')->on('branch');
+            $table->timestampsTz(); // CHỈNH SỬA BƯỚC 3: bổ sung mốc tạo/cập nhật bản ghi.
         });
     }
 
-    /**
-     * Reverse the migrations.
-     */
     public function down(): void
     {
-        Schema::dropIfExists('employees');
+        Schema::dropIfExists('employee');
     }
 };
